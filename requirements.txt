@@ -1,0 +1,8 @@
+google-cloud-bigquery>=3.25
+google-api-python-client>=2.140
+google-auth>=2.30
+pandas>=2.2
+numpy
+pyarrow
+db-dtypes
+openpyxl
