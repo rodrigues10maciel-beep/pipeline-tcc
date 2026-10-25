@@ -1,8 +1,0 @@
-*.json
-*.csv
-*.zip
-*.xlsx
-.env
-__pycache__/
-processados/
-log_execucao.txt
