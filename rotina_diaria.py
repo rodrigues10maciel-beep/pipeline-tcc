@@ -48,6 +48,7 @@ import argparse
 import hashlib
 import io
 import os
+import re
 import sys
 import tempfile
 import traceback
@@ -189,6 +190,21 @@ def criar_servico_drive():
     return servico, email
 
 
+def normalizar_pasta_id(valor: Optional[str]) -> Optional[str]:
+    """Aceita o ID puro ou uma URL do Drive e devolve só o ID (sem espaços,
+    quebras de linha, aspas nem parâmetros como ?usp=sharing)."""
+    if not valor:
+        return valor
+    texto = valor.strip().strip("\"'").strip()
+    m = re.search(r"/folders/([A-Za-z0-9_-]+)", texto)
+    if m:
+        return m.group(1)
+    m = re.search(r"[?&]id=([A-Za-z0-9_-]+)", texto)
+    if m:
+        return m.group(1)
+    return re.split(r"[?&#/\s]", texto)[0]
+
+
 def verificar_pasta_drive(servico, pasta_id: str, email_conta: Optional[str]) -> str:
     """Confirma que a conta enxerga a pasta. Sem essa checagem, uma pasta
     não compartilhada com a conta de serviço apareceria apenas como
@@ -200,7 +216,8 @@ def verificar_pasta_drive(servico, pasta_id: str, email_conta: Optional[str]) ->
     except Exception as erro:  # HttpError 404/403
         conta = email_conta or "a conta usada pela rotina"
         raise RuntimeError(
-            f"Não foi possível acessar a pasta do Drive (ID {pasta_id}). "
+            f"Não foi possível acessar a pasta do Drive (ID {pasta_id}, "
+            f"{len(pasta_id)} caracteres; um ID de pasta costuma ter ~33). "
             f"Compartilhe a pasta com {conta} (permissão de leitor) e "
             f"confirme o ID da pasta. Detalhe: {erro}"
         ) from erro
@@ -544,7 +561,7 @@ def main(argv=None) -> int:
     args = _parse_args(argv)
     ignorar = {n.strip().lower() for n in args.ignorar_pastas.split(",") if n.strip()}
 
-    pasta_id = args.pasta_id or os.environ.get("DRIVE_FOLDER_ID")
+    pasta_id = normalizar_pasta_id(args.pasta_id or os.environ.get("DRIVE_FOLDER_ID"))
     origem = args.origem or ("drive" if pasta_id else "local")
 
     log(f"Rotina diária iniciada (origem: {origem}{', SIMULAÇÃO' if args.simular else ''}).")
