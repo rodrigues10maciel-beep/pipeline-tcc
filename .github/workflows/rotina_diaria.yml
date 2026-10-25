@@ -14,6 +14,10 @@ concurrency:
   group: rotina-diaria
   cancel-in-progress: false
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   rotina:
     runs-on: ubuntu-latest
@@ -27,7 +31,8 @@ jobs:
       - run: pip install -r requirements.txt
       - uses: google-github-actions/auth@v3
         with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          workload_identity_provider: projects/613993294370/locations/global/workloadIdentityPools/github-pool/providers/github-provider
+          service_account: rotina-diaria@tcc-engenharia-computacao.iam.gserviceaccount.com
       - name: Executar rotina
         env:
           DRIVE_FOLDER_ID: ${{ secrets.DRIVE_FOLDER_ID }}
