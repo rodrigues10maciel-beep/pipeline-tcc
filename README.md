@@ -4,8 +4,6 @@ Repositório do banco de dados e do pipeline de dados do TCC **"Pipeline Analít
 
 O projeto coleta diariamente os preços de produtos de hardware em lojas virtuais, armazena o histórico em um Data Warehouse no **Google BigQuery** e classifica cada oferta como *Boa compra*, *Preço médio* ou *Evitar* em relação ao histórico do produto. O resultado é consumido em um dashboard no **Power BI**.
 
-- **Integrantes:** _(preencher com os nomes do grupo)_
-- **Orientador(a):** _(preencher)_
 
 ---
 
