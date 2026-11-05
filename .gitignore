@@ -1,5 +1,6 @@
 *.json
 *.csv
+!dados_exemplo/*.csv
 *.zip
 *.xlsx
 .env
